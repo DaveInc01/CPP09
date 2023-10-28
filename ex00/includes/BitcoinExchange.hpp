@@ -3,7 +3,11 @@
 
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <map>
+#include <iterator>
+#include <fstream>
+#include <vector>
 
 class BitcoinExchange{
 public:
@@ -11,7 +15,11 @@ public:
 	BitcoinExchange( const BitcoinExchange &);
 	BitcoinExchange & operator=(const BitcoinExchange &);
 	~BitcoinExchange(){};
-	static int readFile(char *);
+	static std::map<int, std::string> openFile(char *);
+	static void runProgram(std::map<int, std::string>, std::map<int, std::string>);
+	static void calcLine(std::map<int, std::string>, std::map<int, std::string>);
 };
+
+int checkLine (std::string line);
 
 #endif
