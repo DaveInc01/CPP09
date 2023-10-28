@@ -26,13 +26,14 @@ std::map<int, std::string> BitcoinExchange::openFile(char *filename){
 void BitcoinExchange::calcLine(std::map<int, std::string>, std::map<int, std::string>){}
 
 void BitcoinExchange::runProgram(std::map<int, std::string> inputFile, std::map<int, std::string> dataFile){
-	int i = 0;
+	unsigned long int i = 0;
 	if (inputFile[0].find("date | value") != std::string::npos)
 		i++;
-	while (inputFile[i])
+	while (i < inputFile.size())
 	{
-		if (checkLine(inputFile[i]) == 0)
-			calcLine(inputFile[i], dataFile);
+		checkLine(inputFile[i]);
+			// calcLine(inputFile[i], dataFile);
 		i++;
 	}
+	(void)dataFile;
 }
