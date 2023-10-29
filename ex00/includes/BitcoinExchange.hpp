@@ -8,6 +8,9 @@
 #include <iterator>
 #include <fstream>
 #include <vector>
+#include <algorithm>
+#include <cctype>
+#include <string>
 
 class BitcoinExchange{
 public:
