@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include <sstream> 
+
 
 class BitcoinExchange{
 public:

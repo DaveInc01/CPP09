@@ -18,7 +18,9 @@ std::map<int, std::string> BitcoinExchange::openFile(char *filename){
 				line.clear();
 				i++;
 			}
+
 		}
+		myMap[i] = line;
 	}
 	return (myMap);
 }

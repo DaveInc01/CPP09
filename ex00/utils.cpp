@@ -37,7 +37,6 @@ int check_date(std::string date)
 }
 
 int checkLine (std::string line) {
-	std::cout << line << std::endl;
 	std::string date;
 	int date_end = line.find('|');
 	if ((check_symbols(line) == -1) || (date_end == -1))
@@ -46,7 +45,7 @@ int checkLine (std::string line) {
 		return -1;
 	}
 	date = line.substr(0, date_end);
-
+	
 	// std::cout << "date -" << date <<  std::endl;
 	if (check_date(date) == -1)
 	{
