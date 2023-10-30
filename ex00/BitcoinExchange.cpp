@@ -1,5 +1,12 @@
 #include "includes/BitcoinExchange.hpp"
 
+std::string BitcoinExchange::date = "";
+std::string BitcoinExchange::value = "";
+std::string BitcoinExchange::year = "";
+std::string BitcoinExchange::month = "";
+std::string BitcoinExchange::day = "";
+std::map<std::string, std::string> BitcoinExchange::data;
+
 std::map<int, std::string> BitcoinExchange::openFile(char *filename){
 	std::fstream my_file;
 	my_file.open(filename, std::ios::in);
@@ -18,23 +25,36 @@ std::map<int, std::string> BitcoinExchange::openFile(char *filename){
 				line.clear();
 				i++;
 			}
-
 		}
-		myMap[i] = line;
+		if (line.length() > 1)
+			myMap[i] = line;
 	}
 	return (myMap);
 }
 
-void BitcoinExchange::calcLine(std::map<int, std::string>, std::map<int, std::string>){}
+void BitcoinExchange::calcLine(){
+	std::map<std::string, std::string>::iterator it = BitcoinExchange::data.find(BitcoinExchange::date);
+	if(it != BitcoinExchange::data.end())
+	{
+
+		std::cout << "found value" << it->second;
+	}
+	else {
+		std::cout << "nothing is found\n";
+	}
+}
+
+
 
 void BitcoinExchange::runProgram(std::map<int, std::string> inputFile, std::map<int, std::string> dataFile){
 	unsigned long int i = 0;
+	create_data_map(dataFile);
 	if (inputFile[0].find("date | value") != std::string::npos)
 		i++;
 	while (i < inputFile.size())
 	{
-		checkLine(inputFile[i]);
-			// calcLine(inputFile[i], dataFile);
+		if (checkLine(inputFile[i]) == 0)
+			calcLine();
 		i++;
 	}
 	(void)dataFile;
