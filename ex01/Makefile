@@ -1,10 +1,8 @@
-NAME = btc
+NAME = RPN
 
 SRC = $(wildcard ./*.cpp)
 
 OBJ=$(SRC:.cpp=.o)
-
-CACHES = /Users/dmkhitar/Library/Caches
 
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
@@ -17,6 +15,7 @@ $(NAME) : $(OBJ)
 
 fclean:
 	$(RM) $(OBJ) $(NAME)
+	rm -rf ~/Library/Caches/
 
 clean:
 	$(RM) $(NAME)

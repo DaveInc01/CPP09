@@ -12,14 +12,5 @@ int main(int argc, char **argv){
 		std::cout << "The file is not found\n";
 	else
 		BitcoinExchange::runProgram(inputFileMap, dataFileMap);
-	// check_input_file(inputFileVect)
-	// if(myVect == 0)
-	// 	std::cout << "Error: could not open file." << std::endl;
-	// for(std::vector<std::string>::iterator it = myVect.begin(); it != myVect.end(); it++)
-	// {
-	// 	std::cout << *it;
-	// }
-
 	return 0;
-	// std::multimap<std::string, std::string> myMap;
 }
