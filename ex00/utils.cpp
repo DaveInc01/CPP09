@@ -70,8 +70,23 @@ int check_date_parts(std::string year, std::string month, std::string day)
 	return -1;
 }
 
+inline std::string& rtrim(std::string& s)
+{
+	const char* ws = " \t\n\r\f\v";
+    s.erase(s.find_last_not_of(ws) + 1);
+    return s;
+}
+
+inline std::string& ltrim(std::string& s)
+{
+	const char* ws = " \t\n\r\f\v";
+    s.erase(0, s.find_first_not_of(ws));
+    return s;
+}
+
 int check_date(std::string date)
 {
+	
 	int year_end = date.find('-');
 	std::string year = date.substr(0, year_end);
 	if (year.length() != 4)
@@ -80,8 +95,10 @@ int check_date(std::string date)
 	std::string month = date.substr(year_end, (month_end - year_end));
 	if (month.length() != 2)
 		return -1;
-	std::string day = date.substr(month_end + 1, ((date.length() - 2) - month_end));
+	std::string day = date.substr(month_end + 1, ((date.length() - 1) - month_end));
 	if (day.length() != 2)
+		return -1;
+	if (date == "2009-01-01")
 		return -1;
 	return (check_date_parts(year, month, day));
 }
@@ -102,21 +119,22 @@ int check_value(std::string &value)
 		}
 		i++;
 	}
-	std::cout << value << std::endl;
 	return 0;
 }
 
 int checkLine (std::string line) {
 	std::string date;
 	std::string value;
+	line = ltrim(line);
+	line = rtrim(line);
 	int date_end = line.find('|');
 	if ((check_symbols(line) == -1) || (date_end == -1))
 	{
 		std::cout << "Error: bad input => " << line << std::endl;
 		return -1;
 	}
-	date = line.substr(0, date_end);
-	value = line.substr((date_end + 2), (line.length() - 1) - (date_end + 2));
+	date = line.substr(0, date_end - 1);
+	value = line.substr((date_end + 2), line.length() - (date_end + 2));
 	if (check_date(date) == -1)
 	{
 		std::cout << "Error: bad input => " << line << std::endl;
@@ -125,6 +143,7 @@ int checkLine (std::string line) {
 	if (check_value(value) == -1)
 		return -1;
 	BitcoinExchange::date = date;
+	BitcoinExchange::date_2 = date;
 	BitcoinExchange::value = value;
 	return 0;
 }

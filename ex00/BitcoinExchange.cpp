@@ -1,11 +1,24 @@
 #include "includes/BitcoinExchange.hpp"
 
-std::string BitcoinExchange::date = "";
-std::string BitcoinExchange::value = "";
-std::string BitcoinExchange::year = "";
-std::string BitcoinExchange::month = "";
-std::string BitcoinExchange::day = "";
+std::string BitcoinExchange::date;
+std::string BitcoinExchange::date_2;
+std::string BitcoinExchange::value;
 std::map<std::string, std::string> BitcoinExchange::data;
+
+BitcoinExchange::BitcoinExchange( const BitcoinExchange &copy)
+{
+	this->data = copy.data;
+	this->date = copy.date;
+	this->date_2 = copy.date_2;
+}
+
+BitcoinExchange & BitcoinExchange::operator=(const BitcoinExchange &obj)
+{
+	this->data = obj.data;
+	this->date = obj.date;
+	this->date_2 = obj.date_2;
+	return *this;
+}
 
 std::map<int, std::string> BitcoinExchange::openFile(char *filename){
 	std::fstream my_file;
@@ -33,14 +46,21 @@ std::map<int, std::string> BitcoinExchange::openFile(char *filename){
 }
 
 void BitcoinExchange::calcLine(){
-	std::map<std::string, std::string>::iterator it = BitcoinExchange::data.find(BitcoinExchange::date);
-	if(it != BitcoinExchange::data.end())
+	std::map<std::string, std::string>::iterator found_it = BitcoinExchange::data.find(BitcoinExchange::date);
+	if(found_it != BitcoinExchange::data.end())
 	{
-
-		std::cout << "found value" << it->second;
+		std::stringstream ss1(found_it->second);
+		long double found_value;
+		ss1 >> found_value;
+		std::stringstream ss2(BitcoinExchange::value);
+		long double input_value;
+		ss2 >> input_value;
+		long double sum = input_value * found_value;
+		std::cout << BitcoinExchange::date_2 << " => " << BitcoinExchange::value << " = " << sum << std::endl; 
 	}
 	else {
-		std::cout << "nothing is found\n";
+		BitcoinExchange::date = date_decrement(BitcoinExchange::date);
+		calcLine();
 	}
 }
 

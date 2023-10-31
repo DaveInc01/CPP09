@@ -25,10 +25,8 @@ public:
 	static void calcLine();
 	static std::map<std::string, std::string> data;
 	static std::string date;
+	static std::string date_2;
 	static std::string value;
-	static std::string year;
-	static std::string month;
-	static std::string day;
 };
 
 int checkLine (std::string line);
