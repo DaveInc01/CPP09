@@ -15,7 +15,6 @@ $(NAME) : $(OBJ)
 
 fclean:
 	$(RM) $(OBJ) $(NAME)
-	rm -rf ~/Library/Caches/
 
 clean:
 	$(RM) $(NAME)

@@ -8,10 +8,10 @@ int main(int argc, char **argv){
 	}
 	if (pars_argv(argv[1]) == -1)
 	{
-		std::cout << "Invalid argument!\n";
+		std::cout << "Error\n";
 		return 0;
 	}
 	do_operations(argv[1]);
-	std::cout << "done\n";
+	std::cout << RPN::st.top();
 	return 0;
 }

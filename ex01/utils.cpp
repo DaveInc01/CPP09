@@ -1,10 +1,5 @@
 #include "includes/RPN.hpp"
 
-int do_operations(char *argv)
-{
-	
-}
-
 int pars_argv(char *str){
 	int i = 0;
 	while (str[i])
