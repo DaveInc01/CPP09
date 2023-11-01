@@ -11,7 +11,7 @@ int main(int argc, char **argv){
 		std::cout << "Error\n";
 		return 0;
 	}
-	do_operations(argv[1]);
-	std::cout << RPN::st.top();
+	if (do_operations(argv[1]) == 0)
+		std::cout << RPN::st.top();
 	return 0;
 }

@@ -47,7 +47,13 @@ int calc(char sign)
         }
         case '/':
         {
-            res = a / b;
+            if (b != 0)
+                res = a / b;
+            else
+            {
+                std::cout << "Infinity\n";
+                return -1;
+            }
             break;
         }
         case '*':
@@ -69,12 +75,10 @@ int do_operations(char *argv)
 			i++;
 		if (argv[i] >= '0' && argv[i] <= '9')
             RPN::st.push(argv[i] - '0');
-        else {
-            if (calc(argv[i]) == -1)
-            {
-                std::cout << "Error\n";
-                return -1;
-            }
+        else if (calc(argv[i]) == -1)
+        {
+            std::cout << "Error\n";
+            return -1;
         }
         i++;
 	}
