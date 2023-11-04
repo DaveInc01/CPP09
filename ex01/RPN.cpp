@@ -68,7 +68,7 @@ int calc(char sign)
 
 int do_operations(char *argv)
 {
-	int i  = 0; 
+	int i  = 0;
 	while (argv[i])
 	{
 		if (argv[i] == ' ')

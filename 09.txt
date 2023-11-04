@@ -1,0 +1,8 @@
+ex00)
+	- out of bounds string
+	- 2030 valid
+ex01)
+	./RPN '' segfault at RPN::st.top()
+ex02)
+	no tests
+	algorithm implemented is merge-sort, not merge insertion sort
