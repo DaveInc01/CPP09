@@ -106,8 +106,13 @@ int check_date(std::string date)
 int check_value(std::string &value)
 {
 	int i = 0;
-	if ((value.length() > 9) && (value > "2147483647")){
+	if ((value.length() > 3) && (value > "1000")){
 		std::cout << "Error: too large a number." << std::endl;
+		return -1;
+	}
+	if (!value.size())
+	{
+		std::cout << "Error: empty value." << std::endl;
 		return -1;
 	}
 	while (i < (int)value.size())
@@ -123,18 +128,22 @@ int check_value(std::string &value)
 }
 
 int checkLine (std::string line) {
+	if (line.length() < 2)
+		return -1;
 	std::string date;
 	std::string value;
-	line = ltrim(line);
-	line = rtrim(line);
 	int date_end = line.find('|');
 	if ((check_symbols(line) == -1) || (date_end == -1))
 	{
 		std::cout << "Error: bad input => " << line << std::endl;
 		return -1;
 	}
-	date = line.substr(0, date_end - 1);
-	value = line.substr((date_end + 2), line.length() - (date_end + 2));
+	date = line.substr(0, date_end);
+	date = ltrim(date);
+	date = rtrim(date);
+	value = line.substr((date_end + 1), line.length() - (date_end + 1));
+	value = ltrim(value);
+	value = rtrim(value);
 	if (check_date(date) == -1)
 	{
 		std::cout << "Error: bad input => " << line << std::endl;

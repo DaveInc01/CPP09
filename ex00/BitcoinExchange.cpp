@@ -56,15 +56,13 @@ void BitcoinExchange::calcLine(){
 		long double input_value;
 		ss2 >> input_value;
 		long double sum = input_value * found_value;
-		std::cout << BitcoinExchange::date_2 << " => " << BitcoinExchange::value << " = " << sum << std::endl; 
+		std::cout << BitcoinExchange::date_2 << " => " << BitcoinExchange::value << " = " << sum << std::endl;
 	}
 	else {
 		BitcoinExchange::date = date_decrement(BitcoinExchange::date);
 		calcLine();
 	}
 }
-
-
 
 void BitcoinExchange::runProgram(std::map<int, std::string> inputFile, std::map<int, std::string> dataFile){
 	unsigned long int i = 0;
@@ -73,9 +71,8 @@ void BitcoinExchange::runProgram(std::map<int, std::string> inputFile, std::map<
 		i++;
 	while (i < inputFile.size())
 	{
-		if (checkLine(inputFile[i]) == 0)
+		if ((checkLine(inputFile[i]) == 0))
 			calcLine();
 		i++;
 	}
-	(void)dataFile;
 }

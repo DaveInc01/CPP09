@@ -2,6 +2,8 @@
 
 int pars_argv(char *str){
 	int i = 0;
+	if (!str[i])
+		return -1;
 	while (str[i])
 	{
 		if (str[i] >= '0' && str[i] <= '9')
