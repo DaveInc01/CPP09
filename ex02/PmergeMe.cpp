@@ -1,171 +1,274 @@
-#include "includes/PmergeMe.hpp"
+#include "PmergeMe.hpp"
 
-std::vector<unsigned long> PmergeMe::vect;
-std::list<unsigned long> PmergeMe::lst;
-typedef std::list<unsigned long>::iterator lstIt;
 
-PmergeMe::PmergeMe( const PmergeMe &copy)
+PmergeMe::PmergeMe() {}
+
+PmergeMe::PmergeMe(const std::string &expression) : expression(expression)
 {
-	this->vect = copy.vect;
-	this->lst = copy.lst;
+    validation_and_save();
 }
 
-PmergeMe & PmergeMe::operator=(const PmergeMe &obj)
+PmergeMe::PmergeMe(const PmergeMe &copy)
 {
-	this->vect = obj.vect;
-	this->lst = obj.lst;
-	return *this;
+    if (this != &copy)
+        *this = copy;
+    vector_data = copy.vector_data;
+    deque_data = copy.deque_data;
 }
 
-int check_arg(char* arg)
+PmergeMe &PmergeMe::operator=(const PmergeMe &other)
 {
-	int i = 0;
-	if ((arg[0] == '0' && arg[1] != '\0') || (!arg[0]))
-		return -1;
-	while(arg[i])
-	{
-		if (arg[i] >= '0' && arg[i] <= '9')
-			i++;
-		else
-			return -1;
-	}
-	if ((i >= 19 && strcmp(arg, "18446744073709551615") > 0) || i > 20)
-	{
-		std::cout << "Too big number" << std::endl;
-		return -1;
-	}
-	return 0;
-}
-
-
-void merge_vect(std::vector<unsigned long> &leftvect, std::vector<unsigned long> &rightvect, std::vector<unsigned long> &vect){
-    int len = (int)vect.size();
-    int leftSize = len / 2;
-    int rightSize = len - leftSize;
-    int i = 0;
-    int l = 0;
-    int r = 0;
-
-    while(l < leftSize && r < rightSize)
+    if (this == &other)
     {
-        if (leftvect[l] < rightvect[r])
+        return *this;
+    }
+    vector_data = other.vector_data;
+    deque_data = other.deque_data;
+    return *this;
+}
+
+PmergeMe::~PmergeMe() {}
+
+bool PmergeMe::check_zero(std::string s)
+{
+    int flag = 0;
+    for (std::string::iterator it = s.begin(), end = s.end(); it != end; ++it)
+    {
+        if (*it == '+' && flag == 0)
         {
-            vect[i] = leftvect[l];
-            l++;
-            i++;
+            flag = 1;
+            continue;
         }
-        else{
-            vect[i] = rightvect[r];
-            r++;
-            i++;
+        if (isdigit(*it) == 0)
+        {
+            return false;
         }
     }
-    while (l < leftSize)
-    {
-        vect[i] = leftvect[l];
-        i++;
-        l++;
-    }
-    while (r < rightSize)
-    {
-        vect[i] = rightvect[r];
-        i++;
-        r++;
-    }
+    return true;
 }
 
-void sort_vect(std::vector<unsigned long> &vect)
+void PmergeMe::validation_and_save()
 {
-    int len = (int)vect.size();
-    if (len <= 1)
-        return ;
-    std::vector<unsigned long> left;
-    std::vector<unsigned long> right;
-    int mid = len / 2;
-    left.resize(mid);
-    right.resize(len - mid);
-    int j = 0;
-    for (int i = 0; i < len; i++)
-    {
-        if (i < mid)
-            left[i] = vect[i];
-        else
-            right[j++] = vect[i];
-    }
-    sort_vect(left);
-    sort_vect(right);
-    merge_vect(left, right, vect);
-}
+    std::vector<std::string> tokens;
 
-void split_vect(std::vector<unsigned long> &vect)
-{
-    int len = (int)vect.size();
-    if (len <= 1)
-        return ;
-    std::vector<unsigned long> left;
-    std::vector<unsigned long> right;
-    int mid = len / 2;
-    left.resize(mid);
-    right.resize(len - mid);
-    int j = 0;
-    for (int i = 0; i < len; i++)
-    {
-        if (i < mid)
-            left[i] = vect[i];
-        else
-            right[j++] = vect[i]; // Increment j after assigning value
-    }
-    split_vect(left);
-    split_vect(right);
-    merge_vect(left, right, vect);
-}
+    std::istringstream iss(expression);
 
-void merge_list(std::list<unsigned long> &lst, std::list<unsigned long> &left, std::list<unsigned long> &right)
-{
-    lstIt rIt = right.begin();
-    lstIt lIt = left.begin();
-    while (lIt != left.end() && rIt != right.end())
+    std::string token;
+
+    while (iss >> token)
     {
-        if (*lIt < *rIt)
+        int item = std::atof(token.c_str());
+        if (check_zero(token) && errno != ERANGE)
         {
-            lst.push_back(*lIt);
-            ++lIt;
+            deque_data.push_back(item);
+            vector_data.push_back(item);
         }
         else
         {
-            lst.push_back(*rIt);
-            ++rIt;
+            throw std::runtime_error("Error");
         }
     }
-    while (lIt != left.end())
-    {
-        lst.push_back(*lIt);
-        ++lIt;
-    }
-    while (rIt != right.end())
-    {
-        lst.push_back(*rIt);
-        ++rIt;
-    }
-
 }
 
-void sort_list(std::list<unsigned long> &lst)
+std::vector<int> PmergeMe::getVectorData() const
 {
-    int len = (int)lst.size();
-    if (len <= 1)
-        return ;
-    int mid = len / 2;
-    std::list<unsigned long> left;
-    std::list<unsigned long> right;
-
-    std::list<unsigned long>::iterator it = lst.begin();
-    std::advance(it, mid);
-
-    left.splice(left.begin(), lst, lst.begin(), it);
-    right.splice(right.begin(), lst, it, lst.end());
-
-    sort_list(left);
-    sort_list(right);
-    merge_list(lst, left, right);
+    return vector_data;
 }
+std::deque<int> PmergeMe::getDequeData() const
+{
+    return deque_data;
+}
+
+void PmergeMe::insert(std::deque<int> &nums, std::deque<int> b)
+{
+    int n = 0;
+    int power = 0;
+    size_t start_index = 0;
+    size_t end_index = 0;
+
+    for (size_t i = 0; i < b.size();)
+    {
+        ++power;
+
+        n = pow(2, power) - n;
+
+        start_index += n;
+
+        end_index = start_index - n;
+
+        if (start_index > b.size())
+            start_index = b.size();
+
+        for (size_t j = start_index - 1; j >= end_index;)
+        {
+            std::deque<int>::iterator it = std::upper_bound(nums.begin(), nums.end(), b[j]);
+            nums.insert(it, b[j]);
+            ++i;
+            if (j == 0)
+                break;
+            --j;
+        }
+    }
+}
+
+void PmergeMe::insertion_sort(std::deque<int> &nums)
+{
+    for (size_t i = 1; i < nums.size(); ++i)
+    {
+        int j = i;
+        while (j > 0 && nums[j] < nums[j - 1])
+        {
+            std::swap(nums[j], nums[j - 1]);
+            j--;
+        }
+    }
+}
+std::deque<int>::iterator PmergeMe::customBinarySearchInsertion(std::deque<int>& sortedSequence, int elem) {
+    return std::upper_bound(sortedSequence.begin(), sortedSequence.end(), elem);
+}
+
+void PmergeMe::johnson_sort_deque(std::deque<int> &nums) {
+    int unpaired;
+    std::deque<int> a, b;
+    size_t size = nums.size() / 2 + (nums.size() % 2);
+
+    unpaired = ((nums.size() % 2 == 0) ? -1 : nums[nums.size() - 1]);
+
+    if (nums.size() == 2 || nums.size() == 3) {
+        insertion_sort(nums);
+        return;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        if (i != size - 1 || nums.size() % 2 == 0) {
+            int n = nums[i * 2], m = nums[i * 2 + 1];
+            if (n > m)
+                std::swap(n, m);
+            a.push_back(m);
+            b.push_back(n);
+        }
+    }
+
+    if (unpaired != -1)
+        b.push_back(unpaired);
+
+    johnson_sort_deque(a);
+
+    std::deque<int> remainingElements;
+
+    while (!b.empty()) {
+        int elem = b.back();
+        b.pop_back();
+        std::deque<int>::iterator insertionPos = customBinarySearchInsertion(a, elem);
+        a.insert(insertionPos, elem);
+    }
+
+    nums = a;
+}
+
+
+void PmergeMe::fint_johnson_sort_deque()
+{
+    if (deque_data.size() != 0 && deque_data.size() != 1)
+    {
+        johnson_sort_deque(deque_data);
+    }
+}
+
+void PmergeMe::fint_johnson_sort_vector()
+{
+    if (vector_data.size() != 0 && vector_data.size() != 1)
+    {
+        johnson_sort_vector(vector_data);
+    }
+}
+
+void PmergeMe::insert(std::vector<int> &nums, std::vector<int> b)
+{
+    int n = 0;
+    int power = 0;
+    size_t start_index = 0;
+    size_t end_index = 0;
+
+    for (size_t i = 0; i < b.size();)
+    {
+        ++power;
+
+        n = static_cast<int>(std::pow(2, power)) - n;
+
+        start_index += n;
+
+        end_index = start_index - n;
+
+        if (start_index > b.size())
+            start_index = b.size();
+
+        for (size_t j = start_index - 1; j >= end_index;)
+        {
+            std::vector<int>::iterator it = std::upper_bound(nums.begin(), nums.end(), b[j]);
+            nums.insert(it, b[j]);
+            ++i;
+            if (j == 0)
+                break;
+            --j;
+        }
+    }
+}
+
+void PmergeMe::insertion_sort(std::vector<int> &nums)
+{
+    for (size_t i = 1; i < nums.size(); ++i)
+    {
+        int j = i;
+        while (j > 0 && nums[j] < nums[j - 1])
+        {
+            std::swap(nums[j], nums[j - 1]);
+            j--;
+        }
+    }
+}
+
+std::vector<int>::iterator PmergeMe::customBinarySearchInsertion(std::vector<int>& sortedSequence, int elem) {
+    return std::upper_bound(sortedSequence.begin(), sortedSequence.end(), elem);
+}
+
+void PmergeMe::johnson_sort_vector(std::vector<int> &nums) {
+    int unpaired;
+    std::vector<int> a, b;
+    size_t size = nums.size() / 2 + (nums.size() % 2);
+
+    unpaired = ((nums.size() % 2 == 0) ? -1 : nums[nums.size() - 1]);
+
+    if (nums.size() == 2 || nums.size() == 3) {
+        insertion_sort(nums);
+        return;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        if (i != size - 1 || nums.size() % 2 == 0) {
+            int n = nums[i * 2], m = nums[i * 2 + 1];
+            if (n > m)
+                std::swap(n, m);
+            a.push_back(m);
+            b.push_back(n);
+        }
+    }
+
+    if (unpaired != -1)
+        b.push_back(unpaired);
+
+    johnson_sort_vector(a);
+
+    std::vector<int> remainingElements;
+
+    while (!b.empty()) {
+        int elem = b.back();
+        b.pop_back();
+        std::vector<int>::iterator insertionPos = customBinarySearchInsertion(a, elem);
+        a.insert(insertionPos, elem);
+    }
+
+    nums = a;
+}
+
+

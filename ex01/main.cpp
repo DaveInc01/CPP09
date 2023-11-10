@@ -12,6 +12,8 @@ int main(int argc, char **argv){
 		return 0;
 	}
 	if (do_operations(argv[1]) == 0)
-		std::cout << RPN::st.top();
+	{
+		std::cout << RPN::st.top() << std::endl;
+	}
 	return 0;
 }

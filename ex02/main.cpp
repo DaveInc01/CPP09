@@ -1,51 +1,81 @@
-#include "includes/PmergeMe.hpp"
+#include "PmergeMe.hpp"
 
-void print_stat(float vect_time, float list_time, char **argv, int argc)
+std::string &leftTrim(std::string &str, const std::string &chars)
 {
-	--argc;
-	int i = 1;
-	std::cout << "Before:\t";
-	while (argv[i])
-		std::cout << argv[i++] << " ";
-	std::cout << "\nAfter:\t";
-	std::vector<unsigned long>::iterator it = PmergeMe::vect.begin();
-	while (it != PmergeMe::vect.end())
-		std::cout << *it++ << " ";
-	std::cout << "\nTime to process a range of " << argc <<" elements with std::vector : " << vect_time << " us\n";
-	std::cout << "Time to process a range of " << argc <<" elements with std::list   : " << list_time << " us\n";
+    str.erase(0, str.find_first_not_of(chars));
+    return str;
 }
+
+std::string &rightTrim(std::string &str, const std::string &chars)
+{
+    str.erase(str.find_last_not_of(chars) + 1);
+    return str;
+}
+
+std::string &trimString(std::string &str, const std::string &chars)
+{
+    return leftTrim(rightTrim(str, chars), chars);
+}
+
+void prdoubleContainerData(const std::string &containerType, const std::vector<int> &data, double duration)
+{
+    std::cout << "Time to process a range of " << data.size() << " elements with " << containerType << ": "
+              << std::fixed << std::setprecision(5) << duration * 1e6 << " us" << std::endl;
+}
+
 int main(int argc, char **argv)
 {
-	int i = 1;
-	if (argc < 2){
-		std::cout << "Type the numbers for sorting" << std::endl;
-		return 0;
-	}
-	// if (argv[i][])
-	while(argv[i])
-	{
-		if (check_arg(argv[i]) == -1)
-		{
-			std::cout << "Invalid arguments!" << std::endl;
-			return 0;
-		}
-		i++;
-	}
-	struct timeval start, end;
-	gettimeofday(&start, 0);
-	i = 1;
-	while (argv[i])
-		PmergeMe::vect.push_back((unsigned long)atol(argv[i++]));
-	sort_vect(PmergeMe::vect);
-	gettimeofday(&end, 0);
-	float vect_time = end.tv_usec - start.tv_usec;
-	gettimeofday(&start, 0);
-	i = 1;
-	while (argv[i])
-		PmergeMe::lst.push_back((unsigned long)atol(argv[i++]));
-	sort_list(PmergeMe::lst);
-	gettimeofday(&end, 0);
-	float list_time = end.tv_usec - start.tv_usec;
-	print_stat(vect_time, list_time, argv, argc);
-	return 0;
+    if (argc >= 1)
+    {
+        std::string chars_to_trim = "\n\t\v\f\r ";
+        std::string result;
+        ++argv;
+        while (*argv)
+        {
+            result += " ";
+            result += *argv;
+            ++argv;
+        }
+
+        std::string expression = trimString(result, chars_to_trim);
+
+        try
+        {
+            PmergeMe p(expression);
+            std::vector<double> sorted_vector;
+            std::deque<double> sorted_deque;
+            if(p.getVectorData().size() == 0) {
+                std::cerr << "empty data" << std::endl;
+                return 1;
+            }
+            clock_t start_time = clock();
+            p.fint_johnson_sort_vector();
+            clock_t end_time = clock();
+            double vector_time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
+
+            start_time = clock();
+            p.fint_johnson_sort_deque();
+            end_time = clock();
+            double deque_time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
+
+            std::cout << "Before: " << expression << std::endl;
+            std::cout << "After: ";
+            (void)deque_time;
+            (void)vector_time;
+            unsigned long i = 0;
+            while (i < p.getVectorData().size())
+            {
+                std::cout << p.getVectorData()[i] << " ";
+                i++;
+            }
+            std::cout << std::endl;
+            prdoubleContainerData("std::vector", p.getVectorData(), vector_time);
+            prdoubleContainerData("std::deque", p.getVectorData(), deque_time);
+        }
+        catch (std::exception &e)
+        {
+            std::cerr << "Error" << std::endl;
+        }
+    }
+    return 0;
 }

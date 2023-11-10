@@ -135,7 +135,7 @@ int checkLine (std::string line) {
 	int date_end = line.find('|');
 	if ((check_symbols(line) == -1) || (date_end == -1))
 	{
-		std::cout << "Error: bad input => " << line << std::endl;
+		std::cout << "Error: bad input => " << line;
 		return -1;
 	}
 	date = line.substr(0, date_end);
@@ -146,7 +146,7 @@ int checkLine (std::string line) {
 	value = rtrim(value);
 	if (check_date(date) == -1)
 	{
-		std::cout << "Error: bad input => " << line << std::endl;
+		std::cout << "Error: bad input => " << line;
 		return -1;
 	}
 	if (check_value(value) == -1)
